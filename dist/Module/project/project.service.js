@@ -17,9 +17,133 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const project_entity_1 = require("./entities/project.entity");
 const typeorm_2 = require("typeorm");
+const Mark_entity_1 = require("../Mark/entity/Mark.entity");
+const Teacher_entity_1 = require("../Teacher/entity/Teacher.entity");
+const Student_entity_1 = require("../Student/entity/Student.entity");
 let ProjectService = class ProjectService {
-    constructor(projectRepository) {
+    constructor(projectRepository, markRepository, teacherRepository, studentRepository) {
         this.projectRepository = projectRepository;
+        this.markRepository = markRepository;
+        this.teacherRepository = teacherRepository;
+        this.studentRepository = studentRepository;
+    }
+    async getProjectDetailById(id) {
+        const projects = await this.projectRepository.findOne({ where: { id } });
+        if (!projects) {
+            throw new common_1.NotFoundException(`project with ID ${id} not found`);
+        }
+        const student = projects.id
+            ? await this.studentRepository.findOne({ where: { id: projects.id } })
+            : null;
+        const teacher = projects.id
+            ? await this.teacherRepository.findOne({ where: { id: projects.id } })
+            : null;
+        const marks = projects.id
+            ? await this.markRepository.findOne({ where: { id: projects.id } })
+            : null;
+        return {
+            project: {
+                id: projects.id,
+                title: projects.TITLE,
+                project_subject: projects.PROJECT_SUBJECT,
+                project_mark: projects.PROJECT_MARKS,
+            },
+            student: student
+                ? {
+                    id: student.id,
+                    name: student.NAME,
+                }
+                : null,
+            marks: marks
+                ? {
+                    id: marks.id,
+                    tamil: marks.TAMIL,
+                    english: marks.ENGLISH,
+                    maths: marks.MATHS,
+                    science: marks.SCIENCE,
+                    social_science: marks.SOCIAL_SCIENCE,
+                }
+                : null,
+            teacher: teacher
+                ? {
+                    id: teacher.id,
+                    name: teacher.NAME,
+                }
+                : null,
+        };
+    }
+    async getProjectStudentDetail(id) {
+        const projects = await this.projectRepository.findOne({ where: { id } });
+        if (!projects) {
+            throw new common_1.NotFoundException(`mark with ID ${id} not found`);
+        }
+        const student = projects.id
+            ? await this.studentRepository.findOne({ where: { id: projects.id } })
+            : null;
+        return {
+            ...projects,
+            student: student
+                ? {
+                    id: student.id,
+                    name: student.NAME,
+                }
+                : null,
+        };
+    }
+    async getProjectTeacherDetail(id) {
+        const projects = await this.projectRepository.findOne({ where: { id } });
+        if (!projects) {
+            throw new common_1.NotFoundException(`mark with ID ${id} not found`);
+        }
+        const teacher = projects.id
+            ? await this.teacherRepository.findOne({ where: { id: projects.id } })
+            : null;
+        return {
+            ...projects,
+            teacher: teacher
+                ? { id: teacher.id, name: teacher.NAME }
+                : null,
+        };
+    }
+    async getProjectMarksDetail(id) {
+        const projects = await this.projectRepository.findOne({ where: { id } });
+        if (!projects) {
+            throw new common_1.NotFoundException(`mark with ID ${id} not found`);
+        }
+        const marks = projects.id
+            ? await this.markRepository.findOne({ where: { id: projects.id } })
+            : null;
+        return {
+            ...projects,
+            mark: marks
+                ? {
+                    id: marks.id,
+                    tamil: marks.TAMIL,
+                    english: marks.ENGLISH,
+                    maths: marks.MATHS,
+                    science: marks.SCIENCE,
+                    social_science: marks.SOCIAL_SCIENCE,
+                }
+                : null
+        };
+    }
+    async getAllDetail() {
+        const projects = await this.projectRepository.find();
+        const teachers = await this.teacherRepository.find();
+        const students = await this.studentRepository.find();
+        const marks = await this.markRepository.find();
+        const combinedData = projects.map((projects) => {
+            const student = students.find((s) => s.id === projects.id);
+            const teacher = teachers.find((t) => t.id === projects.id);
+            const mark = marks.find((m) => m.id === projects.id);
+            return {
+                ...projects,
+                student: student ? { id: student.id, name: student.NAME } : null,
+                teacher: teacher ? { id: teacher.id, name: teacher.NAME } : null,
+                mark: mark ? { id: mark.id, tamil: mark.TAMIL, english: mark.ENGLISH, maths: mark.MATHS, science: mark.SCIENCE, social_science: mark.SOCIAL_SCIENCE } : null,
+            };
+        });
+        return combinedData;
     }
     create(createProjectDto) {
         return this.projectRepository.save(createProjectDto);
@@ -41,6 +165,12 @@ exports.ProjectService = ProjectService;
 exports.ProjectService = ProjectService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(project_entity_1.PROJECT)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(Mark_entity_1.MARKS)),
+    __param(2, (0, typeorm_1.InjectRepository)(Teacher_entity_1.TEACHERS)),
+    __param(3, (0, typeorm_1.InjectRepository)(Student_entity_1.STUDENTS)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], ProjectService);
 //# sourceMappingURL=project.service.js.map

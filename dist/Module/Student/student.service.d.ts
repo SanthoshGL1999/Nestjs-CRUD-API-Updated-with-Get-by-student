@@ -8,12 +8,13 @@ import { PROJECT } from '../project/entities/project.entity';
 export declare class StudentService {
     private studentRepository;
     private teacherRepository;
-    private markRepo;
-    private projectRepo;
-    constructor(studentRepository: Repository<STUDENTS>, teacherRepository: Repository<TEACHERS>, markRepo: Repository<MARKS>, projectRepo: Repository<PROJECT>);
+    private markRepository;
+    private projectRepository;
+    constructor(studentRepository: Repository<STUDENTS>, teacherRepository: Repository<TEACHERS>, markRepository: Repository<MARKS>, projectRepository: Repository<PROJECT>);
     getStudentDetailsById(id: number): Promise<any>;
     getStudentTeacherDetails(id: number): Promise<any>;
     getStudentMarkDetails(id: number): Promise<any>;
+    getStudentProjectDetail(id: number): Promise<any>;
     getAllDetails(): Promise<any>;
     findAll(): Promise<STUDENTS[]>;
     findOne(id: number): Promise<STUDENTS>;

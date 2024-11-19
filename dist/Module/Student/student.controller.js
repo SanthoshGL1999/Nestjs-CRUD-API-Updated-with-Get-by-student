@@ -22,7 +22,6 @@ let StudentController = class StudentController {
         this.studentService = studentService;
     }
     async getStudentDetails(id) {
-        console.log(id);
         const data = await this.studentService.getStudentDetailsById(id);
         return {
             success: true,
@@ -38,6 +37,13 @@ let StudentController = class StudentController {
     }
     async getMarkDetails(id) {
         const data = await this.studentService.getStudentMarkDetails(id);
+        return {
+            success: true,
+            data,
+        };
+    }
+    async getProjectDetail(id) {
+        const data = await this.studentService.getStudentProjectDetail(id);
         return {
             success: true,
             data,
@@ -91,6 +97,13 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], StudentController.prototype, "getMarkDetails", null);
+__decorate([
+    (0, common_1.Get)(':id/project'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], StudentController.prototype, "getProjectDetail", null);
 __decorate([
     (0, common_1.Get)('allDetail'),
     __metadata("design:type", Function),

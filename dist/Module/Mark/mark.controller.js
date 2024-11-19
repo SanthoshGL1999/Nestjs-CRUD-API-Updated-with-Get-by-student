@@ -20,6 +20,41 @@ let MarkController = class MarkController {
     constructor(marksService) {
         this.marksService = marksService;
     }
+    async getMarkDetailById(id) {
+        const data = await this.marksService.getMarkDetailById(id);
+        return {
+            success: true,
+            data
+        };
+    }
+    async getMarkStudentById(id) {
+        const data = await this.marksService.getMarkStudentDetail(id);
+        return {
+            success: true,
+            data
+        };
+    }
+    async getMarkTeacherById(id) {
+        const data = await this.marksService.getMarkTeacherDetail(id);
+        return {
+            success: true,
+            data
+        };
+    }
+    async getMarkProjectById(id) {
+        const data = await this.marksService.getMarkProjectDetail(id);
+        return {
+            success: true,
+            data
+        };
+    }
+    async getMarkAllDetail() {
+        const data = await this.marksService.getAllDetail();
+        return {
+            success: true,
+            data
+        };
+    }
     findAll() {
         return this.marksService.findAll();
     }
@@ -29,9 +64,6 @@ let MarkController = class MarkController {
     create(marks) {
         return this.marksService.create(marks);
     }
-    async getMyMarks(req) {
-        return this.marksService.findMarksByStudentId(req.user.id);
-    }
     update(id, marks) {
         return this.marksService.update(id, marks);
     }
@@ -40,6 +72,40 @@ let MarkController = class MarkController {
     }
 };
 exports.MarkController = MarkController;
+__decorate([
+    (0, common_1.Get)(':id/detail'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], MarkController.prototype, "getMarkDetailById", null);
+__decorate([
+    (0, common_1.Get)(':id/student'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], MarkController.prototype, "getMarkStudentById", null);
+__decorate([
+    (0, common_1.Get)(':id/teacher'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], MarkController.prototype, "getMarkTeacherById", null);
+__decorate([
+    (0, common_1.Get)(':id/project'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], MarkController.prototype, "getMarkProjectById", null);
+__decorate([
+    (0, common_1.Get)('alldetail'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], MarkController.prototype, "getMarkAllDetail", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
@@ -60,13 +126,6 @@ __decorate([
     __metadata("design:paramtypes", [Mark_entity_1.MARKS]),
     __metadata("design:returntype", void 0)
 ], MarkController.prototype, "create", null);
-__decorate([
-    (0, common_1.Get)('my-marks'),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], MarkController.prototype, "getMyMarks", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),

@@ -21,11 +21,11 @@ const Teacher_entity_1 = require("../Teacher/entity/Teacher.entity");
 const Mark_entity_1 = require("../Mark/entity/Mark.entity");
 const project_entity_1 = require("../project/entities/project.entity");
 let StudentService = class StudentService {
-    constructor(studentRepository, teacherRepository, markRepo, projectRepo) {
+    constructor(studentRepository, teacherRepository, markRepository, projectRepository) {
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
-        this.markRepo = markRepo;
-        this.projectRepo = projectRepo;
+        this.markRepository = markRepository;
+        this.projectRepository = projectRepository;
     }
     async getStudentDetailsById(id) {
         const student = await this.studentRepository.findOne({ where: { id } });
@@ -35,9 +35,12 @@ let StudentService = class StudentService {
         const teacher = student.id
             ? await this.teacherRepository.findOne({ where: { id: student.id } })
             : null;
-        const marks = await this.markRepo.findOne({ where: { id: student.id } });
-        console.log(marks);
-        const projects = await this.projectRepo.findOne({ where: { id: student.id } });
+        const marks = student.id
+            ? await this.markRepository.findOne({ where: { id: student.id } })
+            : null;
+        const projects = student.id
+            ? await this.projectRepository.findOne({ where: { id: student.id } })
+            : null;
         return {
             student: {
                 id: student.id,
@@ -51,7 +54,6 @@ let StudentService = class StudentService {
                 ? {
                     id: teacher.id,
                     name: teacher.NAME,
-                    subject: teacher.SUBJECT,
                 }
                 : null,
             mark: marks
@@ -79,13 +81,13 @@ let StudentService = class StudentService {
         if (!students) {
             throw new common_1.NotFoundException(`Student with ID ${id} not found`);
         }
-        const teacher = students.CLASS_TEACHER
-            ? await this.teacherRepository.findOne({ where: { id: students.CLASS_TEACHER } })
+        const teacher = students.id
+            ? await this.teacherRepository.findOne({ where: { id: students.id } })
             : null;
         return {
             ...students,
             teacher: teacher
-                ? { id: teacher.id, name: teacher.NAME, subject: teacher.SUBJECT }
+                ? { id: teacher.id, name: teacher.NAME }
                 : null,
         };
     }
@@ -95,7 +97,7 @@ let StudentService = class StudentService {
             throw new common_1.NotFoundException(`Student with ID ${id} not found`);
         }
         const mark = students.id
-            ? await this.markRepo.findOne({ where: { id: students.id } })
+            ? await this.markRepository.findOne({ where: { id: students.id } })
             : null;
         return {
             ...students,
@@ -104,14 +106,35 @@ let StudentService = class StudentService {
                 : null,
         };
     }
+    async getStudentProjectDetail(id) {
+        const student = await this.studentRepository.findOne({ where: { id } });
+        if (!student) {
+            throw new common_1.NotFoundException(`student with id ${id} not found`);
+        }
+        const project = student.id
+            ? await this.projectRepository.findOne({ where: { id } })
+            : null;
+        return {
+            ...student,
+            projects: project
+                ? { id: project.id, title: project.TITLE, project_subject: project.PROJECT_SUBJECT, project_mark: project.PROJECT_MARKS }
+                : null,
+        };
+    }
     async getAllDetails() {
         const students = await this.studentRepository.find();
         const teachers = await this.teacherRepository.find();
+        const marks = await this.markRepository.find();
+        const projects = await this.projectRepository.find();
         const combinedData = students.map((student) => {
-            const teacher = teachers.find((t) => t.id === student.CLASS_TEACHER);
+            const teacher = teachers.find((t) => t.id === student.id);
+            const mark = marks.find((m) => m.id === student.id);
+            const project = projects.find((p) => p.id === student.id);
             return {
                 ...student,
-                teacher: teacher ? { id: teacher.id, name: teacher.NAME, subject: teacher.SUBJECT } : null,
+                teacher: teacher ? { id: teacher.id, name: teacher.NAME } : null,
+                mark: mark ? { id: mark.id, tamil: mark.TAMIL, english: mark.ENGLISH, maths: mark.MATHS, science: mark.SCIENCE, social_science: mark.SOCIAL_SCIENCE } : null,
+                project: project ? { id: project.id, title: project.TITLE, project_subject: project.PROJECT_SUBJECT, project_mark: project.PROJECT_MARKS } : null,
             };
         });
         return combinedData;

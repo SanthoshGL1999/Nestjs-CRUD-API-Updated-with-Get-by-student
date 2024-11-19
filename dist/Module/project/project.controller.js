@@ -21,6 +21,41 @@ let ProjectController = class ProjectController {
     constructor(projectService) {
         this.projectService = projectService;
     }
+    async getProjectDetailById(id) {
+        const data = await this.projectService.getProjectDetailById(id);
+        return {
+            success: true,
+            data,
+        };
+    }
+    async getProjectStudentById(id) {
+        const data = await this.projectService.getProjectStudentDetail(id);
+        return {
+            success: true,
+            data
+        };
+    }
+    async getProjectTeacherById(id) {
+        const data = await this.projectService.getProjectTeacherDetail(id);
+        return {
+            success: true,
+            data
+        };
+    }
+    async getProjectMarksById(id) {
+        const data = await this.projectService.getProjectMarksDetail(id);
+        return {
+            success: true,
+            data
+        };
+    }
+    async getProjectAllDetail() {
+        const data = await this.projectService.getAllDetail();
+        return {
+            success: true,
+            data
+        };
+    }
     create(createProjectDto) {
         return this.projectService.create(createProjectDto);
     }
@@ -38,6 +73,40 @@ let ProjectController = class ProjectController {
     }
 };
 exports.ProjectController = ProjectController;
+__decorate([
+    (0, common_1.Get)(':id/detail'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectDetailById", null);
+__decorate([
+    (0, common_1.Get)(':id/student'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectStudentById", null);
+__decorate([
+    (0, common_1.Get)(':id/teacher'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectTeacherById", null);
+__decorate([
+    (0, common_1.Get)(':id/mark'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectMarksById", null);
+__decorate([
+    (0, common_1.Get)('alldetail'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectAllDetail", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

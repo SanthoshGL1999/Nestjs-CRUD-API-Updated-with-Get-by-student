@@ -17,6 +17,10 @@ export declare class StudentController {
         success: boolean;
         data: any;
     }>;
+    getProjectDetail(id: number): Promise<{
+        success: boolean;
+        data: any;
+    }>;
     getAllDetails(): Promise<{
         success: boolean;
         data: any;
