@@ -8,6 +8,52 @@ import { JwtAuthGuard } from '../auth/Jwt-auth.guard';
 export class TeacherController {
     constructor(private readonly teacherService: TeacherService){}
 
+    @Get(':id/detail')
+    async getTeacherDetailById(@Param('id') id: number) {
+        const data = await this.teacherService.getTeacherDetailById(id);
+        return{
+            success: true,
+            data,
+        };
+    }
+
+    @Get(':id/student')
+    async getTeacherStudentDetail(@Param('id')id: number) {
+        const data = await this.teacherService.getTeacherStduentDetail(id);
+        return{
+            success: true,
+            data,
+        };
+    }
+
+    @Get(':id/mark')
+    async getTeacherMarkDetail(@Param('id')id: number) {
+        const data = await this.teacherService.getTeacherMarkDetail(id);
+        return{
+            success: true,
+            data,
+        };
+    }
+
+    @Get(':id/project')
+    async getTeacherProjectDetail(@Param('id')id: number) {
+        const data = await this.teacherService.getTeacherProjectDetail(id);
+        return{
+            success: true,
+            data,
+        };
+    }
+
+    @Get('alldetails')
+    async getAllDetail() {
+        const data = await this.teacherService.getAllDetail();
+        return{
+            success: true,
+            data,
+        };
+    }
+
+
     @Get()
     findAll(){
         return this.teacherService.findAll();

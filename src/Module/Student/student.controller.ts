@@ -12,7 +12,6 @@ export class StudentController {
 
     @Get(':id/detail')
     async getStudentDetails(@Param('id') id: number) {
-        console.log(id);
         const data = await this.studentService.getStudentDetailsById(id); // Convert string to number
         return {
             success: true,
@@ -33,6 +32,15 @@ export class StudentController {
     async getMarkDetails(@Param('id')id: number) {
         const data = await this.studentService.getStudentMarkDetails(id);
         return {
+            success: true,
+            data,
+        };
+    }
+
+    @Get(':id/project')
+    async getProjectDetail(@Param('id')id: number){
+        const data = await this.studentService.getStudentProjectDetail(id);
+        return{
             success: true,
             data,
         };

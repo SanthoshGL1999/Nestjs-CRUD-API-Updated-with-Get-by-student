@@ -8,6 +8,51 @@ import { JwtAuthGuard } from '../auth/Jwt-auth.guard';
 export class MarkController {
     constructor(private readonly marksService: MarkService){}
 
+    @Get(':id/detail')
+    async getMarkDetailById(@Param('id')id: number){
+        const data = await this.marksService.getMarkDetailById(id)
+        return{
+            success: true,
+            data
+        }
+    }
+    
+    @Get(':id/student')
+    async getMarkStudentById(@Param('id')id: number){
+        const data = await this.marksService.getMarkStudentDetail(id)
+        return{
+            success: true,
+            data
+        }
+    }
+
+    @Get(':id/teacher')
+    async getMarkTeacherById(@Param('id')id: number){
+        const data = await this.marksService.getMarkTeacherDetail(id)
+        return{
+            success: true,
+            data
+        }
+    }
+
+    @Get(':id/project')
+    async getMarkProjectById(@Param('id')id: number){
+        const data = await this.marksService.getMarkProjectDetail(id)
+        return{
+            success: true,
+            data
+        }
+    }
+
+    @Get('alldetail')
+    async getMarkAllDetail(){
+        const data = await this.marksService.getAllDetail()
+        return{
+            success: true,
+            data
+        }
+    }
+
     @Get()
     findAll(){
         return this.marksService.findAll()
@@ -21,12 +66,6 @@ export class MarkController {
     @Post()
     create(@Body() marks: MARKS){
         return this.marksService.create(marks)
-    }
-
-   
-    @Get('my-marks')
-    async getMyMarks(@Request() req) {
-    return this.marksService.findMarksByStudentId(req.user.id);
     }
 
     @Put(':id')

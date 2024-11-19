@@ -15,32 +15,26 @@ export class StudentService {
                 @InjectRepository(TEACHERS)
                 private teacherRepository: Repository<TEACHERS>,
                 @InjectRepository(MARKS) 
-                private markRepo: Repository<MARKS>,
+                private markRepository: Repository<MARKS>,
                 @InjectRepository(PROJECT) 
-                private projectRepo: Repository<PROJECT>,
+                private projectRepository: Repository<PROJECT>,
                 ){}
 
     
                 async getStudentDetailsById(id: number): Promise<any> {
-                    // Fetch the student
                     const student = await this.studentRepository.findOne({ where: { id } });
                     if (!student) {
                         throw new NotFoundException(`Student with ID ${id} not found`);
                     }
-            
-                    // Fetch related teacher
                     const teacher = student.id
                         ? await this.teacherRepository.findOne({ where: { id: student.id } })
                         : null;
-            
-                    // Fetch related marks
-                    const marks = await this.markRepo.findOne({ where: { id: student.id} });
-                    console.log(marks);
-            
-                    // Fetch related projects
-                    const projects = await this.projectRepo.findOne({ where: { id: student.id} });
-            
-                    // Combine all data
+                    const marks = student.id
+                        ? await this.markRepository.findOne({ where: { id: student.id} })
+                        : null;
+                    const projects = student.id
+                        ? await this.projectRepository.findOne({ where: { id: student.id} })
+                        : null;
                     return {
                         student: {
                             id: student.id,
@@ -54,7 +48,6 @@ export class StudentService {
                             ? {
                                   id: teacher.id,
                                   name: teacher.NAME,
-                                  subject: teacher.SUBJECT,
                               }
                             : null,
                         mark: marks
@@ -83,13 +76,13 @@ export class StudentService {
         if (!students) {
             throw new NotFoundException(`Student with ID ${id} not found`);
         }
-        const teacher = students.CLASS_TEACHER 
-            ? await this.teacherRepository.findOne({ where: { id: students.CLASS_TEACHER } }) 
+        const teacher = students.id 
+            ? await this.teacherRepository.findOne({ where: { id: students.id } }) 
             : null;
         return {
             ...students,
             teacher: teacher
-            ? { id: teacher.id, name: teacher.NAME, subject: teacher.SUBJECT }
+            ? { id: teacher.id, name: teacher.NAME }
             : null,
         };
     }
@@ -100,7 +93,7 @@ export class StudentService {
             throw new NotFoundException(`Student with ID ${id} not found`);
         }
         const mark = students.id 
-            ? await this.markRepo.findOne({ where: { id: students.id } }) 
+            ? await this.markRepository.findOne({ where: { id: students.id } }) 
             : null;
         return {
             ...students,
@@ -110,16 +103,38 @@ export class StudentService {
         };
     }
 
+    async getStudentProjectDetail(id: number): Promise<any> {
+        const student= await this.studentRepository.findOne({where: { id }});
+        if(!student){
+            throw new NotFoundException(`student with id ${id} not found`);
+        }
+        const project= student.id
+        ? await this.projectRepository.findOne({where: { id }})
+        : null;
+        return{
+            ...student,
+            projects: project
+            ? {id: project.id, title: project.TITLE, project_subject: project.PROJECT_SUBJECT, project_mark: project.PROJECT_MARKS} 
+            : null,
+        }
+    }
+
     async getAllDetails(): Promise<any> {
 
         const students = await this.studentRepository.find();
         const teachers = await this.teacherRepository.find();
+        const marks = await this.markRepository.find();
+        const projects = await this.projectRepository.find();
         const combinedData = students.map((student) => {
-            const teacher = teachers.find((t) => t.id === student.CLASS_TEACHER);
+            const teacher = teachers.find((t) => t.id === student.id);
+            const mark = marks.find((m) => m.id === student.id);
+            const project = projects.find((p) => p.id === student.id);
             return {
                 ...student,
-                teacher: teacher ? { id: teacher.id, name: teacher.NAME, subject: teacher.SUBJECT } : null,
-            };
+                teacher: teacher ? { id: teacher.id, name: teacher.NAME } : null,
+                mark: mark ? { id: mark.id, tamil: mark.TAMIL, english: mark.ENGLISH, maths: mark.MATHS, science: mark.SCIENCE, social_science: mark.SOCIAL_SCIENCE } : null,
+                project: project ? { id: project.id, title: project.TITLE, project_subject: project.PROJECT_SUBJECT, project_mark: project.PROJECT_MARKS } : null,
+            }
         });
 
         return combinedData;
